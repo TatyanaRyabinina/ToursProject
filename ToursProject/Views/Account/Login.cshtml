@@ -1,0 +1,40 @@
+﻿@model ToursProject.Models.LoginModel
+
+@{
+	ViewBag.Title = "Login";
+}
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header">
+			@Html.ActionLink("Go to Register Page", "Register", "Account", new { @class = "navbar-brand" })
+		</div>
+	</div>
+</div>
+<div class="container body-content">
+	<h2>Login</h2>
+	@using (Html.BeginForm())
+	{
+		<div class="form-horizontal">
+			<hr />
+			@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+			<div class="form-group">
+				@Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", data_type = "email" } })
+				</div>
+			</div>
+			<div class="form-group">
+				@Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", data_type = "password" } })
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-offset-2 col-md-10">
+					<input type="button" onclick="tourproject.login.login(this.form)" value="Login" class="btn btn-default" />
+				</div>
+			</div>
+		</div>
+	}
+</div>

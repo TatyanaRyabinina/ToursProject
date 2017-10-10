@@ -1,0 +1,3 @@
+﻿$(() => {
+	tourproject.tourPage.init();
+});

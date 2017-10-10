@@ -1,0 +1,61 @@
+﻿@model ToursProject.Models.RegisterModel
+
+@{
+	ViewBag.Title = "Register";
+}
+<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="container">
+		<div class="navbar-header">
+			@Html.ActionLink("Go to Login Page", "Login", "Account", new { @class = "navbar-brand" })
+		</div>
+	</div>
+</div>
+<div class="container body-content">
+	<h2>Register</h2>
+	<form enctype="multipart/form-data" method="post">
+		<div class="form-horizontal">
+			<hr />
+			<div class="form-group">
+				@Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", data_type = "email" } })
+				</div>
+			</div>
+			<div class="form-group">
+				@Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.FirstName, new { htmlAttributes = new { @class = "form-control", data_type = "name" } })
+				</div>
+			</div>
+			<div class="form-group">
+				@Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.LastName, new { htmlAttributes = new { @class = "form-control", data_type = "name" } })
+				</div>
+			</div>
+			<div class="form-group">
+				@Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", data_type = "password" } })
+				</div>
+			</div>
+			<div class="form-group">
+				@Html.LabelFor(model => model.ConfirmPassword, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control", data_type = "password" } })
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="control-label col-md-2" for="ConfirmPassword">Photo</label>
+				<div class="col-md-10">
+					<input type="file" id="photoFile" name="Photo" data-type="photo" data-maxsize="4" data-val-required="Требуется загрузка изображения." />
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-offset-2 col-md-10">
+					<input type="button" onclick="tourproject.login.register(this.form)" id="register" value="Create" class="btn btn-default" />
+				</div>
+			</div>
+		</div>
+	</form>
+</div>

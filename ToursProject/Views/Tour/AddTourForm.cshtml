@@ -1,0 +1,56 @@
+﻿@model ToursProject.Models.TourModel
+
+
+@using (Ajax.BeginForm("AddTourForm", "Tour", null, new AjaxOptions
+{
+
+}, new { id = "AddTourForm" }))
+{
+	<form>
+		<div id="AddTour">
+			<div class="form-horizontal" autofocus>
+				@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+				<div class="form-group">
+					@Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label col-md-2" })
+					<div class="col-md-10">
+						@Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control", id = "datepicker", onclick = "tourproject.tourPage.toggleDateTime()" } })
+						@Html.ValidationMessageFor(model => model.Date, "", new { @class = "text-danger" })
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-md-10">
+						@Html.EditorFor(model => model.ExcursionId, new { htmlAttributes = new { @class = "form-control", id = "excursionId", type = "hidden" } })
+					</div>
+				</div>
+				<div class="form-group">
+					@Html.LabelFor(model => model.ExcursionName, htmlAttributes: new { @class = "control-label col-md-2" })
+					<div class="col-md-10">
+						@Html.EditorFor(model => model.ExcursionName, new { htmlAttributes = new { @class = "form-control", id = "excursions", data_editorfor = "#excursionId" } })
+						@Html.ValidationMessageFor(model => model.ExcursionName, "", new { @class = "text-danger" })
+					</div>
+				</div>
+
+
+				<div class="form-group">
+					<div class="col-md-10">
+						@Html.EditorFor(model => model.ClientId, new { htmlAttributes = new { @class = "form-control", id = "clientId", type = "hidden" } })
+					</div>
+				</div>
+
+				<div class="form-group">
+					@Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-md-2" })
+					<div class="col-md-10">
+						@Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control", id = "clients", data_editorfor = "#clientId" } })
+						@Html.ValidationMessageFor(model => model.ClientName, "", new { @class = "text-danger" })
+					</div>
+				</div>
+
+				<div class="form-group">
+					<div class="col-md-offset-2 col-md-10">
+						<input type="button" value="Add Tour" onclick="tourproject.tourPage.submitAddTourForm(this.form)" class="btn btn-default" />
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+}
