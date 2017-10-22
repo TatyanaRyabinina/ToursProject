@@ -48,7 +48,23 @@ namespace DAL
 			}
 		}
 
-		public static Client GetClient(string Email)
+        public static int AddNewClient(Client objClient)
+        {
+            try
+            {
+                using (UserContext db = new UserContext())
+                {
+                    db.Clients.Add(objClient);
+                    db.SaveChanges();
+                    return objClient.ClientId;
+                }
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+        public static Client GetClient(string Email)
 		{
 			Client client = null;
 			using (UserContext db = new UserContext())
@@ -66,5 +82,28 @@ namespace DAL
 				return db.Clients.ToList();
 			}
 		}
-	}
+        public static Boolean EditClientInfo(int id, string name)
+        {
+            try
+            {
+                using (UserContext db = new UserContext())
+                {
+                    Client client = db.Clients.Find(id);
+
+                    var names = name.Split(' ');
+                    string firstName = names[0];
+                    string lastName = names[1];
+
+                    client.FirstName = firstName;
+                    client.LastName = lastName;
+                    db.SaveChanges();
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
 }

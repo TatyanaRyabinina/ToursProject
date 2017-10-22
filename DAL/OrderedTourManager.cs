@@ -18,6 +18,14 @@ namespace DAL
 			}
 		}
 
+        public OrderedTour GetTourInfo(int id)
+        {
+            using (UserContext db = new UserContext())
+            {
+                return db.OrderedTours.Include(e => e.Excursion).Include(c => c.Client).FirstOrDefault(u => u.OrderedTourId == id);
+            }
+        }
+
 		public static Boolean AddNewTour(OrderedTour objTour)
 		{
 			try
@@ -34,6 +42,25 @@ namespace DAL
 				return false;
 			}
 		}
-	}
-
+        public static Boolean EditTourInfo(int Id, DateTime Date, int ClientId, int ExcursionId)
+        {
+            try
+            {
+                using (UserContext db = new UserContext())
+                {
+                    OrderedTour tour = db.OrderedTours.Find(Id);
+                    tour.Date = Date;
+                    tour.ClientId = ClientId;
+                    tour.ExcursionId = ExcursionId;
+                    //   db.Entry(prod).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
 }

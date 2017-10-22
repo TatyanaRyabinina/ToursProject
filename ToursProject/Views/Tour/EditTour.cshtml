@@ -1,0 +1,52 @@
+﻿@model ToursProject.Models.TourModel
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "EditTourForm" }))
+{
+	<div id="errorEditForm">
+	</div>
+	<div class="form-horizontal">
+		<div class="form-group">
+			<div class="col-md-10">
+				@Html.HiddenFor(model => model.OrderedTourId, new { htmlAttributes = new { @class = "form-control" } })
+			</div>
+		</div>
+		<div class="form-group">
+			@Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control datepicker", onclick = "tourproject.tourPage.toggleDateTime(this.form)", data_type = "date", data_val_valid = " Dates must be shown in next format – “MM/DD/YYYY”." } })
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.ExcursionId, new { htmlAttributes = new { @class = "form-control formExcursionId", type = "hidden" } })
+			</div>
+		</div>
+
+		<div class="form-group">
+			@Html.LabelFor(model => model.ExcursionName, htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.ExcursionName, new { htmlAttributes = new { @class = "form-control formExcursions", data_editorfor = "#formExcursionId", data_type = "excursionname" } })
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.ClientId, new { htmlAttributes = new { @class = "form-control formClientId", type = "hidden" } })
+			</div>
+		</div>
+
+		<div class="form-group">
+			@Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-md-2" })
+			<div class="col-md-10">
+				@Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control formClients", data_editorfor = "#formClientId", data_type = "clientname", data_val_valid = "The field should contain First name and Last name" } })
+			</div>
+		</div>
+
+		<div class="form-group">
+			<div class="col-md-offset-2 col-md-10">
+				<input type="button" value="Edit" onclick="tourproject.tourPage.submitEditTourForm(this.form)" class="btn btn-default" />
+			</div>
+		</div>
+	</div>
+}

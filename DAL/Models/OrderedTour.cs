@@ -18,10 +18,13 @@ namespace DAL.Models
 
 		[ForeignKey("Excursion")]
 		public int ExcursionId { get; set; }
+
 		[ForeignKey("Client")]
 		public int ClientId { get; set; }
 
 		public virtual Client Client { get; set; }
 		public virtual Excursion Excursion { get; set; }
-	}
+        public virtual ICollection<OrderedTour_ExcursionSight> OrderedTour_ExcursionSight { get; set; }
+
+    }
 }

@@ -1,4 +1,6 @@
-﻿@{
+﻿@*@model IEnumerable<ToursProject.Controllers.TourController>*@
+
+@{
 	ViewBag.Title = "ToursList";
 }
 <script type="text/javascript" src="~/Scripts/tourproject.init.js"></script>
@@ -17,7 +19,10 @@
 	<br />
 	<div><input type="button" id="addTourBtn" onclick="tourproject.tourPage.addTourDialogOpen()" value="Add Tour"></div>
 	<div id="AddTour" style="display: none;">
-		@Html.Partial("AddTourForm")
+		@Html.Partial("AddTour")
+	</div>
+
+	<div id="EditTour" style="display: none;">
 	</div>
 
 	<hr />

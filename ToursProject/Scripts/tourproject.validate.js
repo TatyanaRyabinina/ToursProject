@@ -61,6 +61,10 @@
 			valid = false;
 			validateErrorMessage = required;
 		}
+		if (!isEmpty && (image.size > 4 * 1024 * 1024)) {
+			valid = false;
+			validateErrorMessage = "The size of image is too large. Please make sure the file is not more than 4 Mb";
+		}
 		if (!isEmpty && regExpMap[pattern]) {
 			regExp = regExpMap[pattern];
 			if (regExp && regExp.test) {
@@ -81,5 +85,8 @@ tourproject.regExp = {
 	email: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
 	name: /^[a-zA-Zа-яА-ЯёЁ-]{1,20}$/,
 	password: /^[a-zA-Z0-9._%+-,`!?<>:;''""@#$^&*()/=]{6,}$/,
-	photo: /image.(jpg|jpeg|gif|png|ico)/i
+	photo: /image.(jpg|jpeg|gif|png|ico)/i,
+	date: /(0[1-9]|1[012])[/](0[1-9]|[12][0-9]|3[01])[/](20)\d\d$/,
+	clientname: /^[a-zA-Zа-яА-ЯёЁ-]{1,20}[ ][a-zA-Zа-яА-ЯёЁ-]{1,20}$/,
+	excursionname: /^[a-zA-Zа-яА-ЯёЁ-]{1,15}[ -]?[a-zA-Zа-яА-ЯёЁ-]{1,15}[ -]?[a-zA-Zа-яА-ЯёЁ-]{1,15}?$/
 };

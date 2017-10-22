@@ -1,0 +1,54 @@
+﻿@model ToursProject.Models.TourModel
+
+@using (Ajax.BeginForm("AddTour", "Tour", null, new { id = "AddTourForm" }))
+{
+	<div>
+		<div id="errorAddForm">
+		</div>
+		<div class="form-horizontal" autofocus>
+			@Html.ValidationSummary(true, "", new { @class = "text-danger" })
+			<div class="form-group">
+				@Html.LabelFor(model => model.Date, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.Date, new { htmlAttributes = new { @class = "form-control datepicker", onclick = "tourproject.tourPage.toggleDateTime(this.form)", data_type = "date", data_val_valid = " Dates must be shown in next format – “MM/DD/YYYY”." } })
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.ExcursionId, new { htmlAttributes = new { @class = "form-control formExcursionId", type = "hidden" } })
+				</div>
+			</div>
+			<div class="form-group">
+				@Html.LabelFor(model => model.ExcursionName, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.ExcursionName, new { htmlAttributes = new { @class = "form-control excursions formExcursions", data_editorfor = ".formExcursionId", data_type = "excursionname" } })
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.ClientId, new { htmlAttributes = new { @class = "form-control clientId formClientId", type = "hidden" } })
+				</div>
+			</div>
+
+			<div class="form-group">
+				@Html.LabelFor(model => model.ClientName, htmlAttributes: new { @class = "control-label col-md-2" })
+				<div class="col-md-10">
+					@Html.EditorFor(model => model.ClientName, new { htmlAttributes = new { @class = "form-control clients formClients", data_editorfor = ".formClientId", data_type = "clientname", data_val_valid = "The field should contain First name and Last name" } })
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="control-label col-md-2">Add Excursion Sight</label>
+				<div class="col-md-10">
+					<input class="form-control text-box" id="addExcursionSight" data-editorfor="#formClientsId" data-val="true" data-val-required="The Client Name field is required." data-val-valid="The field should contain First name and Last name" type="text" value="" autocomplete="off">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-md-offset-2 col-md-10">
+					<input type="button" value="Add Tour" onclick="tourproject.tourPage.submitAddTourForm(this.form)" class="btn btn-default" />
+				</div>
+			</div>
+		</div>
+	</div>
+}

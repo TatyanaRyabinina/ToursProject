@@ -17,3 +17,13 @@ C:\Users\Tatyana\Documents\ToursProject\DAL\bin\Debug\EntityFramework.SqlServer.
 C:\Users\Tatyana\Documents\ToursProject\DAL\obj\Debug\DAL.csprojResolveAssemblyReference.cache
 C:\Users\Tatyana\Documents\ToursProject\DAL\obj\Debug\DAL.exe
 C:\Users\Tatyana\Documents\ToursProject\DAL\obj\Debug\DAL.pdb
+C:\Users\Tatyana\Desktop\git version\ToursProject\DAL\bin\Debug\DAL.exe.config
+C:\Users\Tatyana\Desktop\git version\ToursProject\DAL\bin\Debug\DAL.exe
+C:\Users\Tatyana\Desktop\git version\ToursProject\DAL\bin\Debug\DAL.pdb
+C:\Users\Tatyana\Desktop\git version\ToursProject\DAL\bin\Debug\EntityFramework.dll
+C:\Users\Tatyana\Desktop\git version\ToursProject\DAL\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\Tatyana\Desktop\git version\ToursProject\DAL\bin\Debug\EntityFramework.xml
+C:\Users\Tatyana\Desktop\git version\ToursProject\DAL\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\Tatyana\Desktop\git version\ToursProject\DAL\obj\Debug\DAL.exe
+C:\Users\Tatyana\Desktop\git version\ToursProject\DAL\obj\Debug\DAL.pdb
+C:\Users\Tatyana\Desktop\git version\ToursProject\DAL\obj\Debug\DAL.csprojResolveAssemblyReference.cache

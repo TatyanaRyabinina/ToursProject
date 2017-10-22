@@ -90,8 +90,8 @@ this case we should set data to false
    * Adding support to configure the ajax request in a way that user want. This
 is done in all modules where ajax is used.
    * Added class in cell edit and inline edit so that the cell or row can not
-be edited - the corresponding classes are 'not-editable-cell' and
-'not-editable-row'.
+be edited - the corresponding classes are "not-editable-cell" and
+"not-editable-row".
    * Added Hebrew Translation
    * Added a beforeCheckValues event in editGridRow method. The execution is 
 before checking the values. Should return object of the posted data.
@@ -143,7 +143,7 @@ If not set the name "id" is used.
 
 jsonreader (boolean) default false. If set to true a jsonReader definition
 is used to set the data. Note that this work only of the item in jsonReader
-object 'repeatitems' is set to true.
+object "repeatitems" is set to true.
 
 - Switch to namedItems JS function. This improve the speed. Previously we
 walk throught the entry rowset to find the rowIndex of the given rowid.
@@ -154,7 +154,7 @@ Now we use the build in javaScript method namedItems which do the same.
 - To the  importComplete event in jqGridImport method we pass the response.
 
 - Added support for alternate rows. Also added new jqGrid option altclass.
-The default value is 'ui-priority-secondary' THis way we can develop our own
+The default value is "ui-priority-secondary" THis way we can develop our own
 alternate class.
 
 - Added ShrinkToFit option in setColumns method which fit columns to the grid 
@@ -191,7 +191,7 @@ button is clicked.
 parameter is to define different look and behavior of sorting icons that
 appear near the header. This parameter is array with the following default
 options
-viewsortcols : [false,'vertical',true]
+viewsortcols : [false,"vertical",true]
 
 The first parameter determines if all icons should be viewed at the same time
 when all columns  have sort property set to true.
@@ -200,7 +200,7 @@ should be viewed.
 Setting this parameter to true causes all icons in all sortable columns to be viewed.
 
 The second parameter determines how icons should be placed - vertical means that
-the sorting icons are one under another. 'horizontal' means that the icons should
+the sorting icons are one under another. "horizontal" means that the icons should
 be one near other.
 
 The third parameter determines the click functionality. If set to true the columns are
@@ -280,11 +280,11 @@ When set to true a new empty row is added above this row in form editing.
 - added option - rowcontent (default empty) in colModel formoptions.
 This option have sense only when rowabove option is set to true.
 With this option is possible to set a content to the new added empty row in
-the form. In order to style easy these rows a class 'contentinfo' is set.
+the form. In order to style easy these rows a class "contentinfo" is set.
 
 - added new items in the language files to support the checkOnUpdate option
 
-- added class 'delmsg' in the delGridRow method. This allow us to change the
+- added class "delmsg" in the delGridRow method. This allow us to change the
 message dynamically using a beforeShow or afterSow eventrs. The class is added
 to a element td.
 
@@ -305,8 +305,8 @@ after the first
 - Fixed bug when calling of jqModal multiple times on the same element. We 
 need the initialization only once and not every time. This cause a memory 
 leaks
-- Fixed bug in formatter where the data containing ' causes break in IE 
-- Fixed bug in base module when adding data where the data contain a ' char.
+- Fixed bug in formatter where the data containing " causes break in IE 
+- Fixed bug in base module when adding data where the data contain a " char.
 This breaks in IE browsers.
 - Fixed bug in checkboxes. We add the value setted in the editoptions. Also 
 converting to lower case make the option checkOnUpdate to be true every time. 
@@ -337,12 +337,12 @@ the values of the coulmn.
 - Added method footerData ( action, data, format). This method get or set data
 on footer.
 
-action - can be 'get' or 'set'. If not set default is get.
-When set to 'get' - the result is object of type name:value, where the name is
+action - can be "get" or "set". If not set default is get.
+When set to "get" - the result is object of type name:value, where the name is
 a name from colModel. This will return a data from the footer. The other two
 options  does not have effect in this case.
 
-When set to 'set' a data array (object) should be set. This will place
+When set to "set" a data array (object) should be set. This will place
 the values in the footer.
 
 format - default is true. This instruct the method to use the formmater
@@ -426,7 +426,7 @@ for Up key
 The third item corresponds to reccord down and by default is the  key code for
 Down key
 Example
-$("#mygrid").navGrid("#pager",{options},{id:'myeditid',navkeys: [true,38,40]}..)
+$("#mygrid").navGrid("#pager",{options},{id:"myeditid",navkeys: [true,38,40]}..)
 Also this option does not work in add mode.
 
 Note: Instead that this does not have sense, if you plan to navigate with keys
@@ -477,7 +477,7 @@ continue.
 Navigator
 =========
 This was missed in the first build
-In the navGrid we can pass uniquie id's of the buttons in order to manipulate
+In the navGrid we can pass uniquie id"s of the buttons in order to manipulate
 them easy. If no id is set we create one which is combination of:
 for add button "add_"+ the id of the grid
 for edit button "edit_"+ the id of the grid
@@ -486,7 +486,7 @@ for delete button "del_" + the id of the grid
 for search button "search_" + the id of the grid
 for refresh button "refresh_" + the id of the grid
 Example:
-$("#mygrid").navGrid("#pager",{options}, {id:'myeditid'},{id:'myaddid'}...)
+$("#mygrid").navGrid("#pager",{options}, {id:"myeditid"},{id:"myaddid"}...)
 
 Base Grid
 =========
@@ -632,7 +632,7 @@ is NOT true for the pager element.
 
 New options
 -----------
-datatype can now set as 'script'. In other words, we now support script
+datatype can now set as "script". In other words, we now support script
 as datatype.
 
 reccount: numeric, Default 0. Determines the exact number of available
@@ -661,17 +661,17 @@ column if multiselect is set to true.
 rownumbers: boolean, Default false. If this option is set to true, a new column
 at left of the grid is added. The purpose of this column is to count the number
 of available rows, beginning from 1. In this case colModel is extended
-automatically with new element with name - 'rn'. Also, be careful not to use
-the name 'rn' in colModel
+automatically with new element with name - "rn". Also, be careful not to use
+the name "rn" in colModel
 
 rownumWidth: numeric, Default 25. Determines the width of the row number column
 if rownumbers option is set to true.
 
-pagerpos: string, Default 'center'. Determines the position of the pager in the
+pagerpos: string, Default "center". Determines the position of the pager in the
 grid. By default the pager element when created is divided in 3 parts (one part
 for pager, one part for navigator buttons and one part for record information)
 
-recordpos: string, Default 'right'. Determines the position of the record
+recordpos: string, Default "right". Determines the position of the record
 information in the pager.
 
 toolbar now accepts another option: "both". When we set toolbar: [true,"both"]
@@ -716,7 +716,7 @@ while(1);/*{[
     {"name":"safe value 2"},
    ...
 ]}*/
-jqGrid uses this function when obtaining a data with datatype:'json', also used
+jqGrid uses this function when obtaining a data with datatype:"json", also used
 in subGrid.
 
 Added jQuery function stringToDoc: jQuery.stringToDoc(xmlstring). This returns
@@ -820,13 +820,13 @@ dataEvents: list of events to apply to the data element; uses
 $("#id").bind(type, [data], fn) to bind events to data element
 
 Should be described like this dataEvents: [
-    { type: 'click', data: { i: 7 }, fn: function(e) { console.log(e.data.i); }
-    }, { type: 'keypress', fn: function(e) { console.log('keypress'); } }
+    { type: "click", data: { i: 7 }, fn: function(e) { console.log(e.data.i); }
+    }, { type: "keypress", fn: function(e) { console.log("keypress"); } }
 ]
 
 The event(s) are called only once when the element is created
 -------------------------------------------------------------------------------
-defaultValue: 'value' or function This option is valid only in Form Editing
+defaultValue: "value" or function This option is valid only in Form Editing
 module when used with editGridRow method in add mode.If set this the input
 element is set with this value if only element is empty. If used in selects the
 text should be provided and not the key. Also when a function is used the
@@ -871,7 +871,7 @@ left: 0,
 width: 360,
 height: 80,
 modal: false,
-closeicon: 'ico-close.gif',
+closeicon: "ico-close.gif",
 dirty: false,
 processData: "",
 
@@ -886,7 +886,7 @@ same as those in versions before 3.5 When set to true: 1. We have a possibility
 to add/delete as many conditions as we want 2. The posted data to the server is
 string (actually a json array converted to string)
 
-sFilter: 'filters', This option has an effect only when the multipleSearch is
+sFilter: "filters", This option has an effect only when the multipleSearch is
 set to true; it describes the name of the posted string. By default this, i.e.
 the posted data, can look like this
 
@@ -907,7 +907,7 @@ data that we want to search.
 The above example (if getted and constructed correctly) should generate the
 following where clause
 
-SELECT .... FROM table,... WHERE id > 1 AND name LIKE 'Client%'
+SELECT .... FROM table,... WHERE id > 1 AND name LIKE "Client%"
 -------------------------------------------------------------------------------
 As described above the search is constructed according to the searchoptions in
 colModel
@@ -960,8 +960,8 @@ $("#id").bind(type, [data], fn) to bind events to data element
 
 Should be described like this
 dataEvents: [
-{ type: 'click', data: { i: 7 }, fn: function(e) { console.log(e.data.i); }},
-{ type: 'keypress', fn: function(e) { console.log('keypress'); } }
+{ type: "click", data: { i: 7 }, fn: function(e) { console.log(e.data.i); }},
+{ type: "keypress", fn: function(e) { console.log("keypress"); } }
 ]
 
 The event(s) are called only once when the element is created
@@ -977,12 +977,12 @@ operation. If not set all the available options will be used; if set only the
 set values will appear as selectboxes.
 
 All available option are sopt:
-['eq','ne','lt','le','gt','ge','bw','bn','in','ni','ew','en','cn','nc']
+["eq","ne","lt","le","gt","ge","bw","bn","in","ni","ew","en","cn","nc"]
 
-The corresponding texts are in language file and mean the following ['equal',
-'not equal', 'less', 'less or equal','greater','greater or equal', 'begins
-with','does not begin with','is in','is not in','ends with','does not end
-with','contains','does not contain'],
+The corresponding texts are in language file and mean the following ["equal",
+"not equal", "less", "less or equal","greater","greater or equal", "begins
+with","does not begin with","is in","is not in","ends with","does not end
+with","contains","does not contain"],
 
 Note that the elements in sopt array can be mixed in any order.
 
@@ -990,8 +990,8 @@ Note that the elements in sopt array can be mixed in any order.
 =========add/edit form==========
 In the editGridRow method the following options are no longer used
 
-closeicon: 'ico-close.gif',
-imgpath: ''
+closeicon: "ico-close.gif",
+imgpath: ""
 
 Added new property formoptions (in colModel); thanks to Faserline Team
 (www.faserline.com)
@@ -1000,8 +1000,8 @@ The purpose of these options is to reorder the elements in the form and to add
 some information before and after the editing element.
 
 formoptions : {
-    elmprefix:'',
-    elmsuffix:'',
+    elmprefix:"",
+    elmsuffix:"",
     rowpos:number,
     colpos:number,
     label: value
@@ -1029,8 +1029,8 @@ will place the two elements in one row on the form.
 =========== delete=================================
 In the delGridRow method the following options are no longer used
 
-closeicon: 'ico-close.gif',
-imgpath: '',
+closeicon: "ico-close.gif",
+imgpath: "",
 
 
 
@@ -1048,7 +1048,7 @@ options = {
     modal: false,
     drag: true,
     closeOnEscape : false,
-    labelswidth: '30%'
+    labelswidth: "30%"
 }
 
 
@@ -1079,7 +1079,7 @@ options = {
     afterSearch: null,
     beforeClear: null,
     afterClear: null,
-    searchurl : ''
+    searchurl : ""
 }
 
 autosearch: true Search is performed according to the following rules For text
@@ -1139,9 +1139,9 @@ treeGrid
 the tree icons can be changed using the following grid parameter treeIcons. The
 default values are.
 treeIcons ={
-    plus:'ui-icon-triangle-1-e',
-    minus:'ui-icon-triangle-1-s',
-    leaf:'ui-icon-radio-off'
+    plus:"ui-icon-triangle-1-e",
+    minus:"ui-icon-triangle-1-s",
+    leaf:"ui-icon-radio-off"
 };
 Note that icons from UI Theme should be used.
 
@@ -1155,6 +1155,6 @@ formatter
   the language file
 
 - the showLink now can accept custom name for the id The parameter is idName :
-  'id' The default is id. Can be changed in formatoptions or in the language
+  "id" The default is id. Can be changed in formatoptions or in the language
   file.
 
