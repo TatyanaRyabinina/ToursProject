@@ -1,40 +1,34 @@
 ﻿tourproject.tourPage = {
 	init: function init() {
 		this.renderToursList();
+		$(".excursionSight").sortable();
 
-		$(document).on("focus", "#addExcursionSight", (e) => {
-			console.log(this);
+		$(document).on("focus", "input.addExcursionSight", (e) => {
+			this.excursionSights = [];
 			const form = $(e.currentTarget.form),
 				excursionSightEle = $(e.currentTarget),
-				excursionIdEle = form.find(".formExcursionId"),
-				excursionValue = excursionIdEle.val();
+				excursionEle = form.find(".formExcursions"),
+				excursionValue = excursionEle.val();
 			let url;
 
-			if (excursionValue.length > 0) {
-				url = `/Tour/GetAllExcursionSights?id=${excursionValue}`;
-			}
-			this.excursionSights = this.getAutocompleteInfo(excursionSightEle, null, url);
-		});
-
-		$(document).on("keyup paste", "input", (e) => {
-			let input = $(e.currentTarget),
-				editorfor = input.attr("data-editorfor"),
-				array;
-
-			if (input.hasClass("formExcursions")) {
-				array = this.availableExcursions;
-			} else if (input.hasClass("formClients")) {
-				array = this.availableClients;
-			}
-
-			let selectedValue = $.grep(array, (el) => {
-				return el.value.toLowerCase() === input.val().toLowerCase();
-			});
-
-			if (!selectedValue || !selectedValue.length) {
-				$(editorfor).val("");
+			if (excursionValue && excursionValue.length > 0) {
+				url = `/Tour/GetAllExcursionSights?excursionValue=${excursionValue}`;
+				this.getAutocompleteInfo(excursionSightEle, url)
+				.done((response) => {
+					if (response) {
+						this.excursionSights = response;
+					}
+				});
 			} else {
-				$(editorfor).val(selectedValue[0].id);
+				this.setAutocomplete(excursionSightEle, this.excursionSights);
+			}
+		});
+		$(document).on("keyup", "input.addExcursionSight", (e) => {
+			if (e.keyCode == 13) {
+				let excursionSightEle = $(e.currentTarget),
+					excursionSightValue = excursionSightEle.val();
+
+				this.addExcursionSight(excursionSightValue);
 			}
 		});
 	},
@@ -98,47 +92,63 @@
 				open: (() => {
 					let form = $("#AddTourForm");
 					this.collectAutocompleteObject(form);
+					$(".excursionSight").sortable();
 				})
 			})
 		});
 	},
 	collectAutocompleteObject: function collectAutocompleteObject(form) {
 		let valueEleExcursion = form.find(".formExcursions"),
-			idEleExcursion = form.find(".formExcursionId"),
-			valueEleClient = form.find(".formClients"),
-			idEleClient = form.find(".formClientId");
+			valueEleClient = form.find(".formClients");
 
 		$.when(
-			this.getAutocompleteInfo(valueEleExcursion, idEleExcursion, "/Tour/GetAllExcursions"),
-			this.getAutocompleteInfo(valueEleClient, idEleClient, "/Tour/GetAllClients")
-	).then((responseExcursion, responseClient) => {
-		if (responseExcursion)
-		this.availableExcursions = responseExcursion;
-		this.availableClients = responseClient;
-	});
-			},
-	getAutocompleteInfo: function getAutocompleteInfo(valueEle, idEle, url) {
+			this.getAutocompleteInfo(valueEleExcursion, "/Tour/GetAllExcursions"),
+			this.getAutocompleteInfo(valueEleClient, "/Tour/GetAllClients")
+		).then((responseExcursion, responseClient) => {
+			if (responseExcursion) {
+				this.availableExcursions = responseExcursion;
+			}
+			if (responseClient) {
+				this.availableClients = responseClient;
+			}
+		});
+	},
+	getAutocompleteInfo: function getAutocompleteInfo(valueEle, url) {
 		return $.getJSON(url)
 			.then((response) => {
+				let availableData = [];
 				if (response && response.status === "success") {
 					let responseData = response.result.Data.selectedData;
 
-					this.availableData = responseData;
-					this.setAutocomplete(valueEle, responseData, idEle);
+					availableData = responseData;
 				}
-				return this.availableData;
+				this.setAutocomplete(valueEle, availableData);
+
+				return availableData;
 			});
 	},
-	setAutocomplete: function setAutocomplete(elem, source, elemId) {
+	setAutocomplete: function setAutocomplete(elem, source) {
 		elem.autocomplete({
 			source: source,
 			select: (event, ui) => {
 				elem.val(ui.item.value);
-				if (elemId) {
-					elemId.val(ui.item.id);
+				if (elem.hasClass("addExcursionSight")) {
+					this.addExcursionSight(ui.item.value);
+					event.preventDefault();
 				}
 			}
 		});
+	},
+	addExcursionSight: function addExcursionSight(excursionSightValue) {
+		let selectedValue;
+
+		$('.excursionSight').append(`<li class="excursionSightEle">${excursionSightValue} <input type="button" value="Remove" onclick="tourproject.tourPage.removeExcursionSight()"/></li>`);
+		$(".addExcursionSight").val("");
+	},
+	removeExcursionSight: function removeExcursionSight() {
+		let excursionSightEle = event.currentTarget.parentElement;
+
+		excursionSightEle.remove();
 	},
 	toggleDateTime: function toggleDateTime(form) {
 		const datepicker = $(form).find(".datepicker");
@@ -152,15 +162,29 @@
 			datepicker.removeClass("datepicker-opened");
 		}
 	},
+	collectDataTourForm: function collectDataTourForm(form) {
+		let dataTourForm = form.serializeObject(),
+			excursionSight = [],
+		excursionSightEle = form.find(".excursionSightEle"),
+		excursionSightLength = excursionSightEle.length;
+
+		dataTourForm.Date = new Date(dataTourForm.Date);
+
+		for (let i = 0; i < excursionSightLength; i++) {
+			excursionSight.push(excursionSightEle[i].innerText)
+		}
+		dataTourForm.ExcursionSight = excursionSight;
+
+		return dataTourForm;
+	},
 	submitAddTourForm: function submitAddTourForm(form) {
 		const objForm = $(form);
 		let data = {},
 			isValid = tourproject.validate.validate(objForm);
 
 		if (isValid) {
-			let dataAddTourForm = objForm.serializeObject();
+			dataAddTourForm = this.collectDataTourForm(objForm);
 
-			dataAddTourForm.Date = new Date(dataAddTourForm.Date);
 			objForm.addClass("loading");
 			tourproject.ajax.sendPOST("/Tour/AddTour", JSON.stringify(dataAddTourForm))
 			.done((response) => {
@@ -184,9 +208,7 @@
 			isValid = tourproject.validate.validate(objForm);
 
 		if (isValid) {
-			let dataEditTourForm = objForm.serializeObject();
-
-			dataEditTourForm.Date = new Date(dataEditTourForm.Date);
+			dataEditTourForm = this.collectDataTourForm(objForm);
 
 			objForm.addClass("loading");
 			tourproject.ajax.sendPOST("/Tour/Edit", JSON.stringify(dataEditTourForm))

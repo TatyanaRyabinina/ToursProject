@@ -58,10 +58,9 @@ namespace ToursProject.Controllers
 								Date = o.Date.ToString("MM'/'dd'/'yyyy"),
 								ClientName = c.FirstName + " " + c.LastName,
 								ExcursionName = e.ExcursionName
-							}).OrderBy(u => u.OrderedTourId).Skip((page-1)*rows).Take((int)rows).ToArray()
+							}).OrderBy(u => u.OrderedTourId).Skip((page - 1) * rows).Take((int)rows).ToArray()
 				}
-	};
-
+			};
 			return result;
 		}
 
@@ -76,7 +75,6 @@ namespace ToursProject.Controllers
 					selectedData = (from o in allExcursions
 									select new
 									{
-										id = o.ExcursionId,
 										value = o.ExcursionName
 									})
 				}
@@ -93,98 +91,91 @@ namespace ToursProject.Controllers
 				Data = new
 				{
 					selectedData = (from o in allClients
-								  select new
-								  {
-									  id = o.ClientId,
-									  value = o.FirstName + " " + o.LastName
-								  })
+									select new
+									{
+										value = o.FirstName + " " + o.LastName
+									})
 				}
 			};
-			return Json(new { status = "success", result }, JsonRequestBehavior.AllowGet );
+			return Json(new { status = "success", result }, JsonRequestBehavior.AllowGet);
 		}
 
-		public JsonResult GetAllExcursionSights(int id)
+		public JsonResult GetAllExcursionSights(string excursionValue)
 		{
-			List<DAL.Models.ExcursionSight> allExcursionSight = excMan.GetAllExcursionSight(1);
-			JsonResult result = new JsonResult()
+			List<DAL.Models.ExcursionSight> allExcursionSight = excMan.GetAllExcursionSight(excursionValue);
+			if (allExcursionSight != null)
 			{
-				Data = new
+				JsonResult result = new JsonResult()
 				{
-					selectedData = (from o in allExcursionSight
-								  select new
-								  {
-									  id = o.ExcursionSightId,
-									  value = o.ExcursionSightName 
-								  })
-				}
-			};
-			return Json(new { status = "success", result },  JsonRequestBehavior.AllowGet );
+					Data = new
+					{
+						selectedData = (from o in allExcursionSight
+										select new
+										{
+											value = o.ExcursionSightName
+										})
+					}
+				};
+				return Json(new { status = "success", result }, JsonRequestBehavior.AllowGet);
+			}
+			return Json(new { status = "fail" }, JsonRequestBehavior.AllowGet);
 		}
 
 		public JsonResult AddTour(TourModel Model)
 		{
 			string error = "";
 
-			Boolean TourBoolean = false;
 			if (ModelState.IsValid)
 			{
-				int clientId = 0;
-				int excursionId = 0;
-				if (Model.ClientId == null)
-				{
-					var names = Model.ClientName.Split(' ');
-					string firstName = names[0];
-					string lastName = names[1];
+				var DataForm = CheckAndAddNewData(Model);
 
-					Client objClient = new Client
-					{
-						FirstName = firstName,
-						LastName = lastName
-
-					};
-					Model.ClientId = ClientManager.AddNewClient(objClient);
-				}
-				if (Model.ExcursionId == null)
-				{
-					Excursion objExcursion = new Excursion
-					{
-						ExcursionName = Model.ExcursionName
-					};
-					Model.ExcursionId = ExcursionManager.AddNewExcursion(objExcursion);
-				}
-				if (excursionId == -1 || clientId == -1)
-				{
-					error = "Unexpected error. Please try again.";
-					return Json(new { status = false, error }, JsonRequestBehavior.AllowGet);
-				}
 				OrderedTour objTour = new OrderedTour
 				{
 					Date = Model.Date,
-					ClientId = (int)Model.ClientId,
-					ExcursionId = (int)Model.ExcursionId
+					ClientId = DataForm.Item1,
+					ExcursionId = DataForm.Item2
 				};
+				int orderedTourId = OrderedTourManager.AddNewTour(objTour);
+				if (orderedTourId > -1)
+				{
+					for (int i = 0; i < Model.ExcursionSight.Count; i++)
+					{
+						var excursionSightId = GetExcursionSightId(Model.ExcursionSight[i], DataForm.Item2);
 
-				TourBoolean = OrderedTourManager.AddNewTour(objTour);
+						AddExcursionSight(orderedTourId, excursionSightId, i);
+					}
+				}
 			}
 			else
 			{
 				error = "Form is incorrect.";
 			}
-			return Json(new { status = TourBoolean, error }, JsonRequestBehavior.AllowGet);
+			return Json(new { status = true, error }, JsonRequestBehavior.AllowGet);
 		}
 
 		public ActionResult EditTour(int id)
 		{
 			OrderedTour tour = tourMan.GetTourInfo(id);
+			List<OrderedTour_ExcursionSight> excursionSight = excMan.GetExcursionSightInfo(id);
+			List<string> excursionSightArray = new List<string>();
+			for (int i = 0; i < excursionSight.Count; i++)
+			{
+				foreach (var x in excursionSight)
+				{
+					if (x.OrdinalNumber == i)
+					{
+						excursionSightArray.Add((ExcursionManager.GetExcursionSightName(x.ExcursionSightId)).ExcursionSightName);
+					}
+				}
+			}
 
 			TourModel tourM = new TourModel
 			{
 				OrderedTourId = tour.OrderedTourId,
 				Date = tour.Date,
-				ExcursionId = tour.ExcursionId,
 				ExcursionName = tour.Excursion.ExcursionName,
-				ClientId = tour.ClientId,
-				ClientName = tour.Client.FirstName + " " + tour.Client.LastName
+				ClientName = tour.Client.FirstName + " " + tour.Client.LastName,
+				ExcursionSight = excursionSightArray
 			};
 
 			if (tour != null)
@@ -198,69 +189,103 @@ namespace ToursProject.Controllers
 		public ActionResult Edit(TourModel Model)
 		{
 			string error = "";
-			
+
 			try
 			{
-				Boolean EditExcursionBoolean = false;
-				Boolean EditClientBoolean = false;
-				Boolean EditBoolean = false;
-
 				if (ModelState.IsValid)
 				{
-					
-					if (Model.ClientId == null)
-					{
-						var names = Model.ClientName.Split(' ');
-						string firstName = names[0];
-						string lastName = names[1];
+					OrderedTour_ExcursionSight ExcursionSightToOrderedTour;
+					var DataForm = CheckAndAddNewData(Model);
 
-						Client objClient = new Client
+					OrderedTourManager.EditTourInfo(Model.OrderedTourId, Model.Date, DataForm.Item1, DataForm.Item2);
+
+					for (int i = 0; i < Model.ExcursionSight.Count; i++)
+					{
+						var excursionSightId = GetExcursionSightId(Model.ExcursionSight[i], DataForm.Item2);
+						ExcursionSightToOrderedTour = OrderedTourManager.GetExcursionSightToOrder(Model.OrderedTourId, excursionSightId);
+
+						if (ExcursionSightToOrderedTour == null)
 						{
-							FirstName = firstName,
-							LastName = lastName
-						};
-						Model.ClientId = ClientManager.AddNewClient(objClient);
-					}
-					if (Model.ExcursionId == null)
-					{
-						Excursion objExcursion = new Excursion
-						{
-							ExcursionName = Model.ExcursionName
-						};
-						Model.ExcursionId = ExcursionManager.AddNewExcursion(objExcursion);
-					}
-					if (Model.ExcursionId != -1)
-					{
-						EditExcursionBoolean = ExcursionManager.EditExcursionInfo((int)Model.ExcursionId, Model.ExcursionName);
-					}
-					if (Model.ClientId != -1)
-					{
-						EditClientBoolean = ClientManager.EditClientInfo((int)Model.ClientId, Model.ClientName);
-					}
-					if (EditExcursionBoolean && EditClientBoolean)
-					{
-						EditBoolean = OrderedTourManager.EditTourInfo(Model.OrderedTourId, Model.Date, (int)Model.ClientId, (int)Model.ExcursionId);
-						if (!EditBoolean)
-						{
-							error = "Unexpected error. Please try again.";
+							ExcursionSightToOrderedTour = AddExcursionSight(Model.OrderedTourId, excursionSightId, i);
 						}
-					}
-					else
-					{
-						error = "Unexpected error. Please try again.";
+						else
+						{
+							OrderedTourManager.EditOrdinalNumberExcursionSight(ExcursionSightToOrderedTour, i);
+						}
 					}
 				}
 				else
 				{
 					error = "Form is incorrect.";
 				}
-				return Json(new { status = EditBoolean, error }, JsonRequestBehavior.AllowGet);
+				return Json(new { status = true, error }, JsonRequestBehavior.AllowGet);
 			}
 			catch (Exception ex)
 			{
 				error = "Error occured:" + ex.Message;
 				return Json(new { status = false, error }, JsonRequestBehavior.AllowGet);
 			}
+		}
+
+		public static Tuple<int, int> CheckAndAddNewData(TourModel Model)
+		{
+			int ExcursionId = -1;
+			int ClientId = -1;
+
+			var names = Model.ClientName.Split(' ');
+			string firstName = names[0];
+			string lastName = names[1];
+			Client ClientExist = ClientManager.GetClientExist(firstName, lastName);
+
+			if (ClientExist == null)
+			{
+				Client objClient = new Client
+				{
+					FirstName = firstName,
+					LastName = lastName
+				};
+				ClientId = ClientManager.AddNewClient(objClient);
+			}
+			Excursion ExcursionExist = ExcursionManager.GetExcursionExist(Model.ExcursionName);
+
+			if (ExcursionExist == null)
+			{
+				Excursion objExcursion = new Excursion
+				{
+					ExcursionName = Model.ExcursionName
+				};
+				ExcursionId = ExcursionManager.AddNewExcursion(objExcursion);
+			}
+			return Tuple.Create(ClientExist != null ? ClientExist.ClientId : ClientId, ExcursionExist != null ? ExcursionExist.ExcursionId : ExcursionId);
+		}
+
+		public static int GetExcursionSightId(string ExcursionSightName, int ExcursionId)
+		{
+			int ExcursionSightId = -1;
+			ExcursionSight ExcursionSightExist;
+
+			ExcursionSightExist = ExcursionManager.GetExcursionSightExist(ExcursionSightName, ExcursionId);
+			if (ExcursionSightExist == null)
+			{
+				ExcursionSight objSight = new ExcursionSight
+				{
+					ExcursionSightName = ExcursionSightName,
+					ExcursionId = ExcursionId
+				};
+				ExcursionSightId = ExcursionManager.AddExcursionSight(objSight);
+			}
+			return ExcursionSightExist != null ? ExcursionSightExist.ExcursionSightId : ExcursionSightId;
+		}
+
+		public static OrderedTour_ExcursionSight AddExcursionSight(int orderedTourId, int ExcursionSightId, int OrdinalNumber)
+		{
+			OrderedTour_ExcursionSight objExcursionSightToOrderedTour = new OrderedTour_ExcursionSight
+			{
+				OrderedTourId = orderedTourId,
+				ExcursionSightId = ExcursionSightId,
+				OrdinalNumber = OrdinalNumber
+			};
+			return OrderedTourManager.AddNewExcursionSightToOrederedTour(objExcursionSightToOrderedTour);
 		}
 	}
 }

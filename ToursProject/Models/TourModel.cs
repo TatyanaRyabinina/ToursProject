@@ -13,26 +13,16 @@ namespace ToursProject.Models
 		[DisplayFormat(DataFormatString = "{0:MM'/'dd'/'yyyy}", ApplyFormatInEditMode = true)]
 		public DateTime Date { get; set; }
 
-		public int? ExcursionId { get; set; }
-
 		[Required]
 		[Display(Name = "Excursion Name")]
 		public string ExcursionName { get; set; }
-
-		public int? ClientId { get; set; }
 
 		[Required]
 		[Display(Name = "Client Name")]
 		public string ClientName { get; set; }
 
 		[Required]
-		public List<ExcursionSight> ExcursionSight { get; set; }
-	}
-	public class ExcursionSight
-	{
-		public int? IdExcursionSight { get; set; }
-		public string NameExcursionSight { get; set; }
-		public int OrdinalNumber { get; set; }
+		public List<string> ExcursionSight { get; set; }
 
 	}
 }
