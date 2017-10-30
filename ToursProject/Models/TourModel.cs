@@ -23,6 +23,5 @@ namespace ToursProject.Models
 
 		[Required]
 		public List<string> ExcursionSight { get; set; }
-
 	}
 }

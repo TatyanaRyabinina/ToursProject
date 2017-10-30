@@ -79,7 +79,6 @@ namespace ToursProject.Controllers
 									})
 				}
 			};
-
 			return Json(new { status = "success", result }, JsonRequestBehavior.AllowGet);
 		}
 
@@ -127,20 +126,21 @@ namespace ToursProject.Controllers
 
 			if (ModelState.IsValid)
 			{
-				var DataForm = CheckAndAddNewData(Model);
+				int ClientId = GetClientId(Model.ClientName);
+				int ExcursionId = GetExcursionId(Model.ExcursionName);
 
 				OrderedTour objTour = new OrderedTour
 				{
 					Date = Model.Date,
-					ClientId = DataForm.Item1,
-					ExcursionId = DataForm.Item2
+					ClientId = ClientId,
+					ExcursionId = ExcursionId
 				};
 				int orderedTourId = OrderedTourManager.AddNewTour(objTour);
 				if (orderedTourId > -1)
 				{
 					for (int i = 0; i < Model.ExcursionSight.Count; i++)
 					{
-						var excursionSightId = GetExcursionSightId(Model.ExcursionSight[i], DataForm.Item2);
+						var excursionSightId = GetExcursionSightId(Model.ExcursionSight[i], ExcursionId);
 
 						AddExcursionSight(orderedTourId, excursionSightId, i);
 					}
@@ -157,14 +157,15 @@ namespace ToursProject.Controllers
 		{
 			OrderedTour tour = tourMan.GetTourInfo(id);
 			List<OrderedTour_ExcursionSight> excursionSight = excMan.GetExcursionSightInfo(id);
+
 			List<string> excursionSightArray = new List<string>();
 			for (int i = 0; i < excursionSight.Count; i++)
 			{
 				foreach (var x in excursionSight)
 				{
-					if (x.OrdinalNumber == i)
+					if (x.OrdinalNumber == i && x.ExcursionSightId.HasValue)
 					{
-						excursionSightArray.Add((ExcursionManager.GetExcursionSightName(x.ExcursionSightId)).ExcursionSightName);
+						excursionSightArray.Add((ExcursionManager.GetExcursionSightName((int)x.ExcursionSightId)).ExcursionSightName);
 					}
 				}
 			}
@@ -194,23 +195,24 @@ namespace ToursProject.Controllers
 			{
 				if (ModelState.IsValid)
 				{
-					OrderedTour_ExcursionSight ExcursionSightToOrderedTour;
-					var DataForm = CheckAndAddNewData(Model);
+					int ClientId = GetClientId(Model.ClientName);
+					int ExcursionId = GetExcursionId(Model.ExcursionName);
 
-					OrderedTourManager.EditTourInfo(Model.OrderedTourId, Model.Date, DataForm.Item1, DataForm.Item2);
+					OrderedTourManager.EditTourInfo(Model.OrderedTourId, Model.Date, ClientId, ExcursionId);
+					List<OrderedTour_ExcursionSight> excursionSight = excMan.GetExcursionSightInfo(Model.OrderedTourId);
 
 					for (int i = 0; i < Model.ExcursionSight.Count; i++)
 					{
-						var excursionSightId = GetExcursionSightId(Model.ExcursionSight[i], DataForm.Item2);
-						ExcursionSightToOrderedTour = OrderedTourManager.GetExcursionSightToOrder(Model.OrderedTourId, excursionSightId);
+						var excursionSightId = GetExcursionSightId(Model.ExcursionSight[i], ExcursionId);
 
-						if (ExcursionSightToOrderedTour == null)
+						OrderedTour_ExcursionSight gfg = OrderedTourManager.GetExcursionSightId(i, Model.OrderedTourId);
+						if (gfg != null)
 						{
-							ExcursionSightToOrderedTour = AddExcursionSight(Model.OrderedTourId, excursionSightId, i);
+							OrderedTourManager.EditExcursionIdinOrderedTour(gfg, excursionSightId);
 						}
 						else
 						{
-							OrderedTourManager.EditOrdinalNumberExcursionSight(ExcursionSightToOrderedTour, i);
+							AddExcursionSight(Model.OrderedTourId, excursionSightId, i);
 						}
 					}
 				}
@@ -227,12 +229,25 @@ namespace ToursProject.Controllers
 			}
 		}
 
-		public static Tuple<int, int> CheckAndAddNewData(TourModel Model)
+		public JsonResult DeleteExcursionSight(string ExcursionSightName, string ExcursionName)
 		{
-			int ExcursionId = -1;
+			Excursion ExcursionExist = ExcursionManager.GetExcursionExist(ExcursionName);
+			var excursionSightId = -1;
+			if (ExcursionExist != null)
+			{
+				excursionSightId = GetExcursionSightId(ExcursionSightName, ExcursionExist.ExcursionId);
+				if (excursionSightId > 0)
+				{
+					ExcursionManager.DeleteExcursionSight(excursionSightId);
+				}
+			}
+			return Json(new { status = true }, JsonRequestBehavior.AllowGet);
+		}
+		public static int GetClientId(string ClientName)
+		{
 			int ClientId = -1;
 
-			var names = Model.ClientName.Split(' ');
+			var names = ClientName.Split(' ');
 			string firstName = names[0];
 			string lastName = names[1];
 			Client ClientExist = ClientManager.GetClientExist(firstName, lastName);
@@ -246,17 +261,23 @@ namespace ToursProject.Controllers
 				};
 				ClientId = ClientManager.AddNewClient(objClient);
 			}
-			Excursion ExcursionExist = ExcursionManager.GetExcursionExist(Model.ExcursionName);
+			return ClientExist != null ? ClientExist.ClientId : ClientId;
+		}
+
+		public static int GetExcursionId(string ExcursionName)
+		{
+			int ExcursionId = -1;
+			Excursion ExcursionExist = ExcursionManager.GetExcursionExist(ExcursionName);
 
 			if (ExcursionExist == null)
 			{
 				Excursion objExcursion = new Excursion
 				{
-					ExcursionName = Model.ExcursionName
+					ExcursionName = ExcursionName
 				};
 				ExcursionId = ExcursionManager.AddNewExcursion(objExcursion);
 			}
-			return Tuple.Create(ClientExist != null ? ClientExist.ClientId : ClientId, ExcursionExist != null ? ExcursionExist.ExcursionId : ExcursionId);
+			return ExcursionExist != null ? ExcursionExist.ExcursionId : ExcursionId;
 		}
 
 		public static int GetExcursionSightId(string ExcursionSightName, int ExcursionId)

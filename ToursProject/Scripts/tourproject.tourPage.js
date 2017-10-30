@@ -26,9 +26,13 @@
 		$(document).on("keyup", "input.addExcursionSight", (e) => {
 			if (e.keyCode == 13) {
 				let excursionSightEle = $(e.currentTarget),
-					excursionSightValue = excursionSightEle.val();
+					excursionSightValue = excursionSightEle.val(),
+					valid = true;
 
-				this.addExcursionSight(excursionSightValue);
+				valid = tourproject.validate.validateInput(excursionSightEle);
+				if (valid) {
+					this.addExcursionSight(excursionSightValue);
+				}
 			}
 		});
 	},
@@ -54,9 +58,9 @@
 				{ name: "ClientName", index: "ClientName", width: 200, editable: true },
 				{ name: "ExcursionName", index: "ExcursionName", width: 200, editable: true },
 			],
-			rowNum: 10,
+			rowNum: 5,
 			prmNames: { id: "OrderedTourId" },
-			rowList: [10, 20, 30],
+			rowList: [5, 10, 15],
 			pager: "#pager",
 			viewrecords: true,
 			viewsortcols: [false, false, false, false],
@@ -90,7 +94,7 @@
 				title: "Edit Tour",
 				closeText: "",
 				open: (() => {
-					let form = $("#AddTourForm");
+					let form = $("#EditTourForm");
 					this.collectAutocompleteObject(form);
 					$(".excursionSight").sortable();
 				})
@@ -140,15 +144,27 @@
 		});
 	},
 	addExcursionSight: function addExcursionSight(excursionSightValue) {
-		let selectedValue;
+		let excursionSight = $('.excursionSight'),
+		excursionSightDiv = excursionSight.parent();
 
-		$('.excursionSight').append(`<li class="excursionSightEle">${excursionSightValue} <input type="button" value="Remove" onclick="tourproject.tourPage.removeExcursionSight()"/></li>`);
+		excursionSight.append(`<li class="excursionSightEle">${excursionSightValue} <input type="button" value="Remove" onclick="tourproject.tourPage.removeExcursionSight()"/></li>`);
 		$(".addExcursionSight").val("");
+		excursionSightDiv.find(".error").remove();
 	},
 	removeExcursionSight: function removeExcursionSight() {
-		let excursionSightEle = event.currentTarget.parentElement;
+		let currentExcursionSight = event.currentTarget,
+			excursionSightEle = currentExcursionSight.parentElement,
+			excursionSightValue = $.trim(excursionSightEle.innerText),
+			objForm = $(currentExcursionSight.form),
+			excursionEle = objForm.find(".formExcursions"),
+			excursionValue = excursionEle.val();
 
-		excursionSightEle.remove();
+		tourproject.ajax.sendPOST("/Tour/DeleteExcursionSight", JSON.stringify({ ExcursionSightName: excursionSightValue, ExcursionName: excursionValue }))
+		.done((response) => {
+			if (response && response.status) {
+				excursionSightEle.remove();
+			}
+		})
 	},
 	toggleDateTime: function toggleDateTime(form) {
 		const datepicker = $(form).find(".datepicker");
@@ -171,7 +187,7 @@
 		dataTourForm.Date = new Date(dataTourForm.Date);
 
 		for (let i = 0; i < excursionSightLength; i++) {
-			excursionSight.push(excursionSightEle[i].innerText)
+			excursionSight.push($.trim(excursionSightEle[i].innerText))
 		}
 		dataTourForm.ExcursionSight = excursionSight;
 
@@ -180,7 +196,14 @@
 	submitAddTourForm: function submitAddTourForm(form) {
 		const objForm = $(form);
 		let data = {},
-			isValid = tourproject.validate.validate(objForm);
+			addExcursionSight = objForm.find(".addExcursionSight"),
+			addExcursionSightVal = addExcursionSight.val(),
+			isValid;
+
+		if (addExcursionSightVal) {
+			this.addExcursionSight(addExcursionSightVal);
+		}
+		isValid = tourproject.validate.validate(objForm);
 
 		if (isValid) {
 			dataAddTourForm = this.collectDataTourForm(objForm);
@@ -191,7 +214,7 @@
 				if (response && response.status) {
 					objForm.removeClass("loading");
 					objForm.trigger("reset");
-
+					objForm.find(".excursionSightEle").remove();
 					$("#AddTour").dialog("close");
 					$("#list").trigger("reloadGrid");
 					alert("New Tour was added!");
@@ -205,7 +228,14 @@
 	submitEditTourForm: function submiEditTourForm(form) {
 		const objForm = $(form);
 		let data = {},
-			isValid = tourproject.validate.validate(objForm);
+			addExcursionSight = objForm.find(".addExcursionSight"),
+			addExcursionSightVal = addExcursionSight.val(),
+			isValid;
+
+		if (addExcursionSightVal) {
+			this.addExcursionSight(addExcursionSightVal);
+		}
+		isValid = tourproject.validate.validate(objForm);
 
 		if (isValid) {
 			dataEditTourForm = this.collectDataTourForm(objForm);

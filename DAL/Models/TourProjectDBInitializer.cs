@@ -32,14 +32,10 @@ namespace DAL.Models
             db.ExcursionSights.Add(new ExcursionSight { ExcursionId = 3, ExcursionSightName = "Kutna Hora" });
 
             db.OrderedTours.Add(new OrderedTour { Date = new DateTime(2017, 10, 23), ExcursionId = 2, ClientId = 2 });
-            db.OrderedTours.Add(new OrderedTour { Date = new DateTime(2017, 10, 23), ExcursionId = 2, ClientId = 1 });
+            db.OrderedTours.Add(new OrderedTour { Date = new DateTime(2017, 10, 23), ExcursionId = 3, ClientId = 1 });
             db.OrderedTours.Add(new OrderedTour { Date = new DateTime(2017, 10, 27), ExcursionId = 2, ClientId = 3 });
             db.OrderedTours.Add(new OrderedTour { Date = new DateTime(2017, 11, 21), ExcursionId = 1, ClientId = 3 });
-            db.OrderedTours.Add(new OrderedTour { Date = new DateTime(2017, 12, 21), ExcursionId = 1, ClientId = 4 });
-            db.OrderedTours.Add(new OrderedTour { Date = new DateTime(2017, 12, 27), ExcursionId = 3, ClientId = 4 });
-            db.OrderedTours.Add(new OrderedTour { Date = new DateTime(2017, 12, 25), ExcursionId = 1, ClientId = 2 });
-            db.OrderedTours.Add(new OrderedTour { Date = new DateTime(2018, 02, 11), ExcursionId = 3, ClientId = 3 });
-            db.OrderedTours.Add(new OrderedTour { Date = new DateTime(2018, 02, 11), ExcursionId = 3, ClientId = 2 });
+            db.OrderedTours.Add(new OrderedTour { Date = new DateTime(2017, 12, 21), ExcursionId = 3, ClientId = 4 });
 
             db.OrderedTour_ExcursionSights.Add(new OrderedTour_ExcursionSight { OrderedTourId = 4, ExcursionSightId = 2, OrdinalNumber = 0 });
             db.OrderedTour_ExcursionSights.Add(new OrderedTour_ExcursionSight { OrderedTourId = 4, ExcursionSightId = 1, OrdinalNumber = 1 });

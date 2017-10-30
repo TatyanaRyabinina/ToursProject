@@ -78,6 +78,24 @@ namespace DAL
 				return false;
 			}
 		}
+		public static Boolean EditExcursionIdinOrderedTour(OrderedTour_ExcursionSight ExcursionSightToOrderedTour, int ExcursionSightId)
+		{
+			using (UserContext db = new UserContext())
+			{
+				ExcursionSightToOrderedTour.ExcursionSightId = ExcursionSightId;
+				db.Entry(ExcursionSightToOrderedTour).State = EntityState.Modified;
+				db.SaveChanges();
+			}
+			return true;
+		}
+
+		public static OrderedTour_ExcursionSight GetExcursionSightId(int OrdinalNumber, int OrderedTourId)
+		{
+			using (UserContext db = new UserContext())
+			{
+			   return db.OrderedTour_ExcursionSights.FirstOrDefault(u => u.OrderedTourId == OrderedTourId && u.OrdinalNumber == OrdinalNumber);
+			}
+		}
 
 		public static Boolean EditTourInfo(int Id, DateTime Date, int ClientId, int ExcursionId)
 		{

@@ -80,8 +80,18 @@ namespace DAL
 				return db.ExcursionSights.FirstOrDefault(u => u.ExcursionSightName == ExcursionSightName && u.ExcursionId == ExcursionId);
 			}
 		}
+		public static Boolean DeleteExcursionSight(int ExcursionSightId)
+		{
+			using (UserContext db = new UserContext())
+			{
+				ExcursionSight objExcursionSight = db.ExcursionSights.Include(u=>u.OrderedTour_ExcursionSight).FirstOrDefault(u => u.ExcursionSightId == ExcursionSightId);
+				db.ExcursionSights.Remove(objExcursionSight);
+				db.SaveChanges();
+			}
+			return true;
+		}
 
-		public static int AddExcursionSight(ExcursionSight objSight)
+	public static int AddExcursionSight(ExcursionSight objSight)
 		{
 			try
 			{
@@ -111,6 +121,13 @@ namespace DAL
 			using (UserContext db = new UserContext())
 			{
 				return db.ExcursionSights.FirstOrDefault(u => u.ExcursionSightId == id);
+			}
+		}
+		public static ExcursionSight FindExcursionSightToExcursionId(int excursionId, int excursionSightId)
+		{
+			using (UserContext db = new UserContext())
+			{
+				return db.ExcursionSights.FirstOrDefault(u => u.ExcursionSightId == excursionSightId && u.ExcursionId == excursionId);
 			}
 		}
 	}

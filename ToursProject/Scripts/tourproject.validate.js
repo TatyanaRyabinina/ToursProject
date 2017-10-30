@@ -1,9 +1,12 @@
 ﻿tourproject.validate = {
 	validate: function validate(form) {
 		const inputs = form.find(".text-box"),
+			list = form.find("ul"),
 			file = $('#photoFile');
 		let valid = true,
-			inputValid;
+			inputValid,
+			passwordValid,
+			listValid;
 
 		form.find(".error").remove();
 		inputs.each((i, e) => {
@@ -15,6 +18,15 @@
 
 		inputValid = this.validateImage(file);
 		if (!inputValid) {
+			valid = false;
+		}
+		listValid = this.validateList(list);
+		if (!listValid) {
+			valid = false;
+		}
+
+		passwordValid = this.passwordsMatch(form);
+		if (!passwordValid) {
 			valid = false;
 		}
 		return valid;
@@ -47,7 +59,6 @@
 		}
 		return valid;
 	},
-
 	validateImage: function validateFile(file) {
 		const image = file[0] ? file[0].files[0] : {},
 			pattern = file.attr("data-type") || "",
@@ -68,14 +79,43 @@
 		if (!isEmpty && regExpMap[pattern]) {
 			regExp = regExpMap[pattern];
 			if (regExp && regExp.test) {
-				valid = regExp.test(image.type);
-				if (!valid) {
+				validRegExp = regExp.test(image.type);
+				if (!validRegExp) {
+					valid = false;
 					validateErrorMessage = "File not supported!";
 				}
 			}
 		}
 		if (!valid) {
 			file.after(`<span class='error text-danger'> ${validateErrorMessage} </span>`);
+		}
+		return valid;
+	},
+	passwordsMatch: function passwordsMatch(form) {
+		const password = form.find("#Password"),
+			confirmPassword = form.find("#ConfirmPassword");
+		let valid = true,
+			validateErrorMessage = "";
+		if (password.length > 0 && confirmPassword.length > 0 && password.val() != confirmPassword.val()) {
+			validateErrorMessage = "Passwords don't match!";
+			valid = false;
+		}
+		if (!valid) {
+			confirmPassword.after(`<span class='error text-danger'> ${validateErrorMessage} </span>`);
+		}
+		return valid;
+	},
+	validateList: function validateList(list) {
+		let listEle = list.find("li"),
+			validateErrorMessage ="",
+			valid = true;
+
+		if (list.length > 0 && listEle.length === 0) {
+			valid = false;
+			validateErrorMessage = "At least one item is required!";
+		} 
+		if(!valid){
+			list.after(`<span class='error text-danger'> ${validateErrorMessage} </span>`);
 		}
 		return valid;
 	}

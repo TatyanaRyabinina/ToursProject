@@ -17,7 +17,7 @@ namespace DAL.Models
         public int OrderedTourId { get; set; }
 
         [ForeignKey("ExcursionSight")]
-        public int ExcursionSightId { get; set; }
+        public int? ExcursionSightId { get; set; }
 
         public int OrdinalNumber { get; set; }
 
