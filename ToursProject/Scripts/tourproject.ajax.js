@@ -8,4 +8,4 @@
 			dataType: "json"
 		});
 	}
- };
+};

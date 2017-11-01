@@ -36,6 +36,7 @@
 			val = input.val(),
 			maxLength = input.attr("max-length"),
 			required = input.attr("data-val-required"),
+			validMessage = input.attr("data-val-valid"),
 			pattern = input.attr("data-type"),
 			regExpMap = tourproject.regExp,
 			valid = true,
@@ -47,9 +48,9 @@
 		} else if (val && regExpMap[pattern]) {
 			regExp = regExpMap[pattern];
 			if (regExp && regExp.test) {
-				valid = regExp.test(val);
+				valid = regExp.test($.trim(val));
 				if (!valid) {
-					validateErrorMessage = "Not valid!";
+					validateErrorMessage = `Not valid! ${validMessage ? validMessage : ""}`;
 				}
 			}
 		}
@@ -96,7 +97,8 @@
 			confirmPassword = form.find("#ConfirmPassword");
 		let valid = true,
 			validateErrorMessage = "";
-		if (password.length > 0 && confirmPassword.length > 0 && password.val() != confirmPassword.val()) {
+
+		if (password.length > 0 && confirmPassword.length > 0 && $.trim(password.val()) != $.trim(confirmPassword.val())) {
 			validateErrorMessage = "Passwords don't match!";
 			valid = false;
 		}
@@ -113,7 +115,7 @@
 		if (list.length > 0 && listEle.length === 0) {
 			valid = false;
 			validateErrorMessage = "At least one item is required!";
-		} 
+		}
 		if(!valid){
 			list.after(`<span class='error text-danger'> ${validateErrorMessage} </span>`);
 		}
@@ -128,5 +130,5 @@ tourproject.regExp = {
 	photo: /image.(jpg|jpeg|gif|png|ico)/i,
 	date: /(0[1-9]|1[012])[/](0[1-9]|[12][0-9]|3[01])[/](20)\d\d$/,
 	clientname: /^[a-zA-Zа-яА-ЯёЁ-]{1,20}[ ][a-zA-Zа-яА-ЯёЁ-]{1,20}$/,
-	excursionname: /^[a-zA-Zа-яА-ЯёЁ-]{1,15}[ -]?[a-zA-Zа-яА-ЯёЁ-]{1,15}[ -]?[a-zA-Zа-яА-ЯёЁ-]{1,15}?$/
+	excursionname: /^[a-zA-Zа-яА-ЯёЁ-]{1,15}[ -]?[a-zA-Zа-яА-ЯёЁ-]{1,15}[ -]?[a-zA-Zа-яА-ЯёЁ-]{1,15}$/
 };

@@ -27,7 +27,6 @@ namespace DAL
 			{
 				client = db.Clients.FirstOrDefault(u => u.Email == Email);
 			}
-
 			return client != null ? true : false;
 		}
 
@@ -64,6 +63,7 @@ namespace DAL
 				return -1;
 			}
 		}
+
 		public static Client GetClient(string Email)
 		{
 			Client client = null;
@@ -81,6 +81,7 @@ namespace DAL
 				return db.Clients.ToList();
 			}
 		}
+
 		public static Client GetClientExist(string FirstName, string LastName)
 		{
 			Client client = null;
@@ -90,6 +91,7 @@ namespace DAL
 			}
 			return client;
 		}
+
 		public static Boolean EditClientInfo(int id, string name)
 		{
 			try

@@ -51,6 +51,7 @@
 		});
 
 		formData.append('Photo', ($('#photoFile')[0].files[0]), imageName);
+
 		return formData;
 	},
 	sendRegisterForm: function sendRegisterForm(data) {

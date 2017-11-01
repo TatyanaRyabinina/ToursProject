@@ -21,6 +21,5 @@ namespace DAL.Models
 		public string PhotoPath { get; set; }
 
 		public virtual ICollection<OrderedTour> OrderedTour { get; set; }
-
 	}
 }

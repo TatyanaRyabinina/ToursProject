@@ -149,6 +149,7 @@ namespace ToursProject.Controllers
 			else
 			{
 				error = "Form is incorrect.";
+				return Json(new { status = false, error }, JsonRequestBehavior.AllowGet);
 			}
 			return Json(new { status = true, error }, JsonRequestBehavior.AllowGet);
 		}
@@ -201,14 +202,25 @@ namespace ToursProject.Controllers
 					OrderedTourManager.EditTourInfo(Model.OrderedTourId, Model.Date, ClientId, ExcursionId);
 					List<OrderedTour_ExcursionSight> excursionSight = excMan.GetExcursionSightInfo(Model.OrderedTourId);
 
-					for (int i = 0; i < Model.ExcursionSight.Count; i++)
-					{
-						var excursionSightId = GetExcursionSightId(Model.ExcursionSight[i], ExcursionId);
+					var Count = excursionSight.Count > Model.ExcursionSight.Count ? excursionSight.Count : Model.ExcursionSight.Count;
 
-						OrderedTour_ExcursionSight gfg = OrderedTourManager.GetExcursionSightId(i, Model.OrderedTourId);
-						if (gfg != null)
+					int? excursionSightId;
+					for (int i = 0; i < Count; i++)
+					{
+						try
 						{
-							OrderedTourManager.EditExcursionIdinOrderedTour(gfg, excursionSightId);
+							excursionSightId = (int)GetExcursionSightId(Model.ExcursionSight[i], ExcursionId);
+						}
+						catch
+						{
+							excursionSightId = null;
+						}
+
+
+						OrderedTour_ExcursionSight ExcursionSightToOrderedTour = OrderedTourManager.GetExcursionSightId(i, Model.OrderedTourId);
+						if (ExcursionSightToOrderedTour != null)
+						{
+							OrderedTourManager.EditExcursionIdinOrderedTour(ExcursionSightToOrderedTour, excursionSightId);
 						}
 						else
 						{
@@ -219,6 +231,7 @@ namespace ToursProject.Controllers
 				else
 				{
 					error = "Form is incorrect.";
+					return Json(new { status = false, error }, JsonRequestBehavior.AllowGet);
 				}
 				return Json(new { status = true, error }, JsonRequestBehavior.AllowGet);
 			}
@@ -229,20 +242,6 @@ namespace ToursProject.Controllers
 			}
 		}
 
-		public JsonResult DeleteExcursionSight(string ExcursionSightName, string ExcursionName)
-		{
-			Excursion ExcursionExist = ExcursionManager.GetExcursionExist(ExcursionName);
-			var excursionSightId = -1;
-			if (ExcursionExist != null)
-			{
-				excursionSightId = GetExcursionSightId(ExcursionSightName, ExcursionExist.ExcursionId);
-				if (excursionSightId > 0)
-				{
-					ExcursionManager.DeleteExcursionSight(excursionSightId);
-				}
-			}
-			return Json(new { status = true }, JsonRequestBehavior.AllowGet);
-		}
 		public static int GetClientId(string ClientName)
 		{
 			int ClientId = -1;
@@ -298,7 +297,7 @@ namespace ToursProject.Controllers
 			return ExcursionSightExist != null ? ExcursionSightExist.ExcursionSightId : ExcursionSightId;
 		}
 
-		public static OrderedTour_ExcursionSight AddExcursionSight(int orderedTourId, int ExcursionSightId, int OrdinalNumber)
+		public static OrderedTour_ExcursionSight AddExcursionSight(int orderedTourId, int? ExcursionSightId, int OrdinalNumber)
 		{
 			OrderedTour_ExcursionSight objExcursionSightToOrderedTour = new OrderedTour_ExcursionSight
 			{

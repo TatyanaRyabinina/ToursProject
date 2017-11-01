@@ -23,13 +23,26 @@
 				this.setAutocomplete(excursionSightEle, this.excursionSights);
 			}
 		});
+		$(document).on("keyup", "input.formExcursions ", (e) => {
+			const form = $(e.currentTarget.form);
+
+			form.find(".excursionSightEle").remove();
+		});
 		$(document).on("keyup", "input.addExcursionSight", (e) => {
 			if (e.keyCode == 13) {
 				let excursionSightEle = $(e.currentTarget),
 					excursionSightValue = excursionSightEle.val(),
-					valid = true;
+					valid = true,
+					inputValid;
 
-				valid = tourproject.validate.validateInput(excursionSightEle);
+				if (excursionSightValue.length === 0) {
+					valid = false;
+				}
+
+				inputValid = tourproject.validate.validateInput(excursionSightEle);
+				if (!inputValid) {
+					valid = false;
+				}
 				if (valid) {
 					this.addExcursionSight(excursionSightValue);
 				}
@@ -101,6 +114,15 @@
 			})
 		});
 	},
+	closeTourForm: function closeTourForm(form) {
+		const objForm = $(form),
+			popup = $(form.parentElement);
+
+		objForm.trigger("reset");
+		objForm.find(".excursionSightEle").remove();
+		popup.dialog('close');
+		alert("Tour Form was closed without saving data.")
+	},
 	collectAutocompleteObject: function collectAutocompleteObject(form) {
 		let valueEleExcursion = form.find(".formExcursions"),
 			valueEleClient = form.find(".formClients");
@@ -135,7 +157,8 @@
 		elem.autocomplete({
 			source: source,
 			select: (event, ui) => {
-				elem.val(ui.item.value);
+			    elem.val(ui.item.value);
+
 				if (elem.hasClass("addExcursionSight")) {
 					this.addExcursionSight(ui.item.value);
 					event.preventDefault();
@@ -144,8 +167,8 @@
 		});
 	},
 	addExcursionSight: function addExcursionSight(excursionSightValue) {
-		let excursionSight = $('.excursionSight'),
-		excursionSightDiv = excursionSight.parent();
+		const excursionSight = $('.excursionSight'),
+			excursionSightDiv = excursionSight.parent();
 
 		excursionSight.append(`<li class="excursionSightEle">${excursionSightValue} <input type="button" value="Remove" onclick="tourproject.tourPage.removeExcursionSight()"/></li>`);
 		$(".addExcursionSight").val("");
@@ -153,18 +176,9 @@
 	},
 	removeExcursionSight: function removeExcursionSight() {
 		let currentExcursionSight = event.currentTarget,
-			excursionSightEle = currentExcursionSight.parentElement,
-			excursionSightValue = $.trim(excursionSightEle.innerText),
-			objForm = $(currentExcursionSight.form),
-			excursionEle = objForm.find(".formExcursions"),
-			excursionValue = excursionEle.val();
+			excursionSightEle = currentExcursionSight.parentElement;
 
-		tourproject.ajax.sendPOST("/Tour/DeleteExcursionSight", JSON.stringify({ ExcursionSightName: excursionSightValue, ExcursionName: excursionValue }))
-		.done((response) => {
-			if (response && response.status) {
-				excursionSightEle.remove();
-			}
-		})
+		excursionSightEle.remove();
 	},
 	toggleDateTime: function toggleDateTime(form) {
 		const datepicker = $(form).find(".datepicker");
@@ -181,8 +195,8 @@
 	collectDataTourForm: function collectDataTourForm(form) {
 		let dataTourForm = form.serializeObject(),
 			excursionSight = [],
-		excursionSightEle = form.find(".excursionSightEle"),
-		excursionSightLength = excursionSightEle.length;
+			excursionSightEle = form.find(".excursionSightEle"),
+			excursionSightLength = excursionSightEle.length;
 
 		dataTourForm.Date = new Date(dataTourForm.Date);
 
@@ -215,9 +229,12 @@
 					objForm.removeClass("loading");
 					objForm.trigger("reset");
 					objForm.find(".excursionSightEle").remove();
+
 					$("#AddTour").dialog("close");
 					$("#list").trigger("reloadGrid");
-					alert("New Tour was added!");
+					setTimeout(() => {
+						alert("New Tour was added!");
+					}, 100);
 				} else if (response && !response.status && response.error.length > 0) {
 					$("#errorAddForm").append((`<span class="error text-danger"> ${response.error} </span>`));
 					objForm.removeClass("loading");
@@ -248,9 +265,11 @@
 
 					$("#EditTour").dialog("close");
 					$("#list").trigger("reloadGrid");
-					alert("Tour was edited!");
+					setTimeout(() => {
+						alert("New Tour was edited!");
+					}, 100);
 				} else if (response && !response.status && response.error.length > 0) {
-					$("errorEditForm").append((`<span class="error text-danger"> ${response.error} </span>`));
+					$("#errorEditForm").append((`<span class="error text-danger"> ${response.error} </span>`));
 					objForm.removeClass("loading");
 				}
 			});

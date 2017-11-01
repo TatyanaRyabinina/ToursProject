@@ -35,6 +35,5 @@ namespace ToursProject.Models
 		[DataType(DataType.Password)]
 		[Compare("Password", ErrorMessage = "Пароли не совпадают")]
 		public string ConfirmPassword { get; set; }
-
 	}
 }

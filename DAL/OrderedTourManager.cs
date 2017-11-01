@@ -61,24 +61,7 @@ namespace DAL
 			}
 		}
 
-		public static Boolean EditOrdinalNumberExcursionSight(OrderedTour_ExcursionSight ExcursionSightToOrderedTour, int OrdinalNumber)
-		{
-			try
-			{
-				using (UserContext db = new UserContext())
-				{
-					ExcursionSightToOrderedTour.OrdinalNumber = OrdinalNumber;
-					db.Entry(ExcursionSightToOrderedTour).State = EntityState.Modified;
-					db.SaveChanges();
-				}
-				return true;
-			}
-			catch
-			{
-				return false;
-			}
-		}
-		public static Boolean EditExcursionIdinOrderedTour(OrderedTour_ExcursionSight ExcursionSightToOrderedTour, int ExcursionSightId)
+		public static Boolean EditExcursionIdinOrderedTour(OrderedTour_ExcursionSight ExcursionSightToOrderedTour, int? ExcursionSightId)
 		{
 			using (UserContext db = new UserContext())
 			{

@@ -14,7 +14,6 @@ namespace DAL.Models
 		public string ExcursionName { get; set; }
 		
 		public virtual ICollection<OrderedTour> OrderedTour { get; set; }
-        public virtual ICollection<ExcursionSight> ExcursionSight { get; set; }
-
-    }
+		public virtual ICollection<ExcursionSight> ExcursionSight { get; set; }
+	}
 }

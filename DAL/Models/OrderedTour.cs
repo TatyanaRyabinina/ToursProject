@@ -24,7 +24,6 @@ namespace DAL.Models
 
 		public virtual Client Client { get; set; }
 		public virtual Excursion Excursion { get; set; }
-        public virtual ICollection<OrderedTour_ExcursionSight> OrderedTour_ExcursionSight { get; set; }
-
-    }
+		public virtual ICollection<OrderedTour_ExcursionSight> OrderedTour_ExcursionSight { get; set; }
+	}
 }
