@@ -23,7 +23,7 @@
 				this.setAutocomplete(excursionSightEle, this.excursionSights);
 			}
 		});
-		$(document).on("keyup", "input.formExcursions ", (e) => {
+		$(document).on("keyup", "input.formExcursions", (e) => {
 			const form = $(e.currentTarget.form);
 
 			form.find(".excursionSightEle").remove();
@@ -43,6 +43,7 @@
 				if (!inputValid) {
 					valid = false;
 				}
+
 				if (valid) {
 					this.addExcursionSight(excursionSightValue);
 				}
@@ -99,7 +100,7 @@
 		})
 	},
 	editTourDialogOpen: function editTourDialogOpen(ids) {
-		$.getJSON("/Tour/EditTour?id=" + ids)
+		tourproject.ajax.sendRequest("/Tour/EditTour", `id=${ids}`, "GET")
 		.done((response) => {
 			$("#EditTour").html(response);
 			$("#EditTour").dialog({
@@ -120,7 +121,7 @@
 
 		objForm.trigger("reset");
 		objForm.find(".excursionSightEle").remove();
-		popup.dialog('close');
+		popup.dialog("close");
 		alert("Tour Form was closed without saving data.")
 	},
 	collectAutocompleteObject: function collectAutocompleteObject(form) {
@@ -140,24 +141,23 @@
 		});
 	},
 	getAutocompleteInfo: function getAutocompleteInfo(valueEle, url) {
-		return $.getJSON(url)
+		return tourproject.ajax.sendRequest(url, null, "GET")
 			.then((response) => {
-				let availableData = [];
+				let responseData = [];
+
 				if (response && response.status === "success") {
-					let responseData = response.result.Data.selectedData;
-
-					availableData = responseData;
+					responseData = response.result.Data.selectedData;
 				}
-				this.setAutocomplete(valueEle, availableData);
+				this.setAutocomplete(valueEle, responseData);
 
-				return availableData;
+				return responseData;
 			});
 	},
 	setAutocomplete: function setAutocomplete(elem, source) {
 		elem.autocomplete({
 			source: source,
 			select: (event, ui) => {
-			    elem.val(ui.item.value);
+				elem.val(ui.item.value);
 
 				if (elem.hasClass("addExcursionSight")) {
 					this.addExcursionSight(ui.item.value);
@@ -167,7 +167,7 @@
 		});
 	},
 	addExcursionSight: function addExcursionSight(excursionSightValue) {
-		const excursionSight = $('.excursionSight'),
+		const excursionSight = $(".excursionSight"),
 			excursionSightDiv = excursionSight.parent();
 
 		excursionSight.append(`<li class="excursionSightEle">${excursionSightValue} <input type="button" value="Remove" onclick="tourproject.tourPage.removeExcursionSight()"/></li>`);
@@ -223,20 +223,15 @@
 			dataAddTourForm = this.collectDataTourForm(objForm);
 
 			objForm.addClass("loading");
-			tourproject.ajax.sendPOST("/Tour/AddTour", JSON.stringify(dataAddTourForm))
+			tourproject.ajax.sendRequest("/Tour/AddTour", JSON.stringify(dataAddTourForm), "POST")
 			.done((response) => {
 				if (response && response.status) {
-					objForm.removeClass("loading");
 					objForm.trigger("reset");
 					objForm.find(".excursionSightEle").remove();
 
-					$("#AddTour").dialog("close");
-					$("#list").trigger("reloadGrid");
-					setTimeout(() => {
-						alert("New Tour was added!");
-					}, 100);
+					this.submitSucsess(objForm, "added");
 				} else if (response && !response.status && response.error.length > 0) {
-					$("#errorAddForm").append((`<span class="error text-danger"> ${response.error} </span>`));
+					tourproject.validate.applyFieldError($("#errorAddForm"), response.error, "append");
 					objForm.removeClass("loading");
 				}
 			});
@@ -252,27 +247,31 @@
 		if (addExcursionSightVal) {
 			this.addExcursionSight(addExcursionSightVal);
 		}
-		isValid = tourproject.validate.validate(objForm);
 
+		isValid = tourproject.validate.validate(objForm);
 		if (isValid) {
 			dataEditTourForm = this.collectDataTourForm(objForm);
 
 			objForm.addClass("loading");
-			tourproject.ajax.sendPOST("/Tour/Edit", JSON.stringify(dataEditTourForm))
+			tourproject.ajax.sendRequest("/Tour/Edit", JSON.stringify(dataEditTourForm), "POST")
 			.done((response) => {
 				if (response && response.status) {
-					objForm.removeClass("loading");
-
-					$("#EditTour").dialog("close");
-					$("#list").trigger("reloadGrid");
-					setTimeout(() => {
-						alert("New Tour was edited!");
-					}, 100);
+					this.submitSucsess(objForm, "edited");
 				} else if (response && !response.status && response.error.length > 0) {
-					$("#errorEditForm").append((`<span class="error text-danger"> ${response.error} </span>`));
+					tourproject.validate.applyFieldError($("#errorEditForm"), response.error, "append");
 					objForm.removeClass("loading");
 				}
 			});
 		}
+	},
+	submitSucsess: function submitSucsess(objForm, method) {
+		objForm.removeClass("loading");
+		objForm.parent().dialog("close");
+
+		$("#list").trigger("reloadGrid");
+
+		setTimeout(() => {
+			alert(`Tour was ${method}!`);
+		}, 100);
 	}
 };

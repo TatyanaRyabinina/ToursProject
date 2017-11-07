@@ -1,21 +1,15 @@
 ﻿tourproject.login = {
-	login: function login(form){
+	login: function login(form) {
 		const objForm = $(form),
 			isValid = tourproject.validate.validate(objForm);
 
 		if (isValid) {
 			let dataLoginForm = JSON.stringify(objForm.serializeObject());
 
-			objForm.addClass('loading');
-			tourproject.ajax.sendPOST("/Account/Login", dataLoginForm)
+			objForm.addClass("loading");
+			tourproject.ajax.sendRequest("/Account/Login", dataLoginForm, "POST")
 			.done((response) => {
-				if (response && response.status) {
-					location.href = location.origin + "/Tour/Index";
-				}
-				else if (response && !response.status && response.error.length > 0) {
-					$("hr").after((`<span class='error text-danger'> ${response.error} </span>`));
-					objForm.removeClass('loading');
-				}
+				this.doneSubmit(response, objForm);
 			})
 		}
 	},
@@ -26,18 +20,12 @@
 		if (isValid) {
 			let formData = this.collectDataFormRegister(objForm);
 
-			objForm.addClass('loading');
+			objForm.addClass("loading");
 			this.sendRegisterForm(formData)
-			.then((response) => {
+			.done((response) => {
 				response = JSON.parse(response);
 
-				if (response && response.status) {
-					location.href = location.origin + "/Tour/Index";
-				}
-				else if(response && !response.status && response.error.length > 0) {
-					$("hr").after((`<span class='error text-danger'> ${response.error} </span>`));
-					objForm.removeClass('loading');
-				}
+				this.doneSubmit(response, objForm);
 			})
 		}
 	},
@@ -50,7 +38,7 @@
 			formData.append(e.getAttribute("name"), e.value);
 		});
 
-		formData.append('Photo', ($('#photoFile')[0].files[0]), imageName);
+		formData.append("Photo", ($("#photoFile")[0].files[0]), imageName);
 
 		return formData;
 	},
@@ -59,11 +47,21 @@
 			let request = new XMLHttpRequest();
 
 			request.open("POST", "/Account/Register");
-			request.onload = function() {
+			request.onload = function () {
 				resolve(this.responseText);
 			};
 
 			request.send(data);
 		});
+	},
+	doneSubmit: function doneSubmit(response, objForm) {
+		if (response && response.status) {
+			location.href = location.origin + "/Tour/Index";
+			return;
+		}
+		if (response && !response.status && response.error.length > 0) {
+			tourproject.validate.applyFieldError($("hr"), response.error);
+			objForm.removeClass("loading");
+		}
 	}
 };

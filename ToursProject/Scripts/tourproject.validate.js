@@ -2,7 +2,7 @@
 	validate: function validate(form) {
 		const inputs = form.find(".text-box"),
 			list = form.find("ul"),
-			file = $('#photoFile');
+			files = form.find(".photoFile");
 		let valid = true,
 			inputValid,
 			passwordValid,
@@ -16,10 +16,13 @@
 			}
 		});
 
-		inputValid = this.validateImage(file);
-		if (!inputValid) {
-			valid = false;
-		}
+		files.each((i, e) => {
+			inputValid = this.validateImage(e);
+			if (!inputValid) {
+				valid = false;
+			}
+		});
+
 		listValid = this.validateList(list);
 		if (!listValid) {
 			valid = false;
@@ -56,14 +59,15 @@
 		}
 		input.parent().find(".error").remove();
 		if (!valid) {
-			input.after(`<span class='error text-danger'> ${validateErrorMessage} </span>`);
+			this.applyFieldError(input, validateErrorMessage, "after");
 		}
 		return valid;
 	},
 	validateImage: function validateFile(file) {
-		const image = file[0] ? file[0].files[0] : {},
-			pattern = file.attr("data-type") || "",
-			required = file.attr("data-val-required") || "",
+		const objFile = $(file),
+			image = objFile[0] ? objFile[0].files[0] : {},
+			pattern = objFile.attr("data-type") || "",
+			required = objFile.attr("data-val-required") || "",
 			isEmpty = $.isEmptyObject(image),
 			regExpMap = tourproject.regExp;
 		let validateErrorMessage = "",
@@ -88,13 +92,13 @@
 			}
 		}
 		if (!valid) {
-			file.after(`<span class='error text-danger'> ${validateErrorMessage} </span>`);
+			this.applyFieldError(objFile, validateErrorMessage, "after");
 		}
 		return valid;
 	},
 	passwordsMatch: function passwordsMatch(form) {
-		const password = form.find("#Password"),
-			confirmPassword = form.find("#ConfirmPassword");
+		const password = form.find(".password"),
+			confirmPassword = form.find(".confirmPassword");
 		let valid = true,
 			validateErrorMessage = "";
 
@@ -103,7 +107,7 @@
 			valid = false;
 		}
 		if (!valid) {
-			confirmPassword.after(`<span class='error text-danger'> ${validateErrorMessage} </span>`);
+			this.applyFieldError(confirmPassword, validateErrorMessage, "after");
 		}
 		return valid;
 	},
@@ -117,9 +121,12 @@
 			validateErrorMessage = "At least one item is required!";
 		}
 		if(!valid){
-			list.after(`<span class='error text-danger'> ${validateErrorMessage} </span>`);
+			this.applyFieldError(list, validateErrorMessage, "after");
 		}
 		return valid;
+	},
+	applyFieldError: function applyFieldError(ele, validateErrorMessage, method) {
+		ele[method](`<span class="error text-danger"> ${validateErrorMessage} </span>`);
 	}
 };
 

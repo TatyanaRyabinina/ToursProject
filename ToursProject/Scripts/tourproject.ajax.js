@@ -1,8 +1,8 @@
 ﻿tourproject.ajax = {
-	sendPOST: function sendPOST(url, data) {
+	sendRequest: function sendRequest(url, data, type) {
 		return $.ajax({
 			url: url,
-			type: "POST",
+			type: type,
 			data: data,
 			contentType: "application/json; charset=utf-8",
 			dataType: "json"
