@@ -218,6 +218,7 @@
     <Content Include="Scripts\jQuery\_references.js" />
     <Content Include="Scripts\tourproject.ajax.js" />
     <Content Include="Scripts\tourproject.init.js" />
+    <Content Include="Scripts\tourproject.initFunction.js" />
     <Content Include="Scripts\tourproject.js" />
     <Content Include="Scripts\tourproject.tourPage.js" />
     <Content Include="Scripts\tourproject.validate.js" />
@@ -241,6 +242,7 @@
     <Content Include="Views\Tour\Index.cshtml" />
     <Content Include="Views\Tour\EditTour.cshtml" />
     <Content Include="Views\Tour\AddTour.cshtml" />
+    <Content Include="Views\Account\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

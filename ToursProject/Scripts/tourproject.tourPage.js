@@ -1,6 +1,11 @@
 ﻿tourproject.tourPage = {
 	init: function init() {
-		this.renderToursList();
+		const isToursList = location.hash === "#toursList" ? true : false;
+
+		if(isToursList){
+			this.loadToursListContent();
+		}
+
 		$(".excursionSight").sortable();
 
 		$(document).on("focus", "input.addExcursionSight", (e) => {
@@ -29,7 +34,7 @@
 			form.find(".excursionSightEle").remove();
 		});
 		$(document).on("keyup", "input.addExcursionSight", (e) => {
-			if (e.keyCode == 13) {
+			if (e.keyCode == 13) { //if enter was pressed
 				let excursionSightEle = $(e.currentTarget),
 					excursionSightValue = excursionSightEle.val(),
 					valid = true,
@@ -273,5 +278,14 @@
 		setTimeout(() => {
 			alert(`Tour was ${method}!`);
 		}, 100);
+	},
+	loadToursListContent: function loadToursListContent() {
+		tourproject.ajax.sendRequest("/Tour/Index", null, "GET")
+		.done((response) => {
+			if (response) {
+				$("body").html(response);
+				this.renderToursList();
+			}
+		});
 	}
 };

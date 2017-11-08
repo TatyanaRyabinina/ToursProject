@@ -10,16 +10,21 @@ using ToursProject.Models;
 
 namespace ToursProject.Controllers
 {
-	public class AccountController : Controller
+	public class AccountController : BaseController
 	{
 		ClientManager clientMan = new ClientManager();
 
-		public ActionResult Login()
-		{
-			return View();
-		}
+        public ActionResult Index()
+        {
+            return View();
+        }
 
-		[HttpPost]
+        public ActionResult Login()
+		{
+            return Json(RenderPartialViewToString("Login"), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
 		public ActionResult Login(LoginModel model)
 		{
 			string error = "";
@@ -30,9 +35,9 @@ namespace ToursProject.Controllers
 				if (RegisterUserBoolean)
 				{
 					FormsAuthentication.SetAuthCookie(model.Email, true);
-					return Json(new { status = true });
-				}
-				else
+                    return Redirect("/Tour/Index");
+                }
+                else
 				{
 					Boolean EmailExistBoolean = ClientManager.FindEmailClient(model.Email);
 					if (EmailExistBoolean)
@@ -55,7 +60,7 @@ namespace ToursProject.Controllers
 
 		public ActionResult Register()
 		{
-			return View();
+            return Json(RenderPartialViewToString("Register"), JsonRequestBehavior.AllowGet);
 		}
 
 		[HttpPost]
@@ -84,9 +89,9 @@ namespace ToursProject.Controllers
 					if (RegisterBoolean)
 					{
 						FormsAuthentication.SetAuthCookie(model.Email, true);
-						return Json(new { status = true });
-					}
-					else
+                        return Json(RenderPartialViewToString("Index"), JsonRequestBehavior.AllowGet);
+                    }
+                    else
 					{
 						error = "Unexpected error. Please try again.";
 					}
@@ -106,7 +111,7 @@ namespace ToursProject.Controllers
 		public ActionResult Logoff()
 		{
 			FormsAuthentication.SignOut();
-			return Redirect("/Account/Login");
-		}
-	}
+            return Json(RenderPartialViewToString("Login"), JsonRequestBehavior.AllowGet);
+        }
+    }
 }

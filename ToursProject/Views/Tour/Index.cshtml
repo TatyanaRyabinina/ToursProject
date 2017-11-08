@@ -1,15 +1,12 @@
-﻿@*@model IEnumerable<ToursProject.Controllers.TourController>*@
-
-@{
+﻿@{
 	ViewBag.Title = "ToursList";
 }
-<script type="text/javascript" src="~/Scripts/tourproject.init.js"></script>
 <div class="navbar navbar-inverse navbar-fixed-top">
 	<div class="container">
 		<div class="navbar-header">
 			<img src="~/Files/@ViewBag.PhotoPath" align="left" Hspace="30" height="50" width="50" />
 			<span class="navbar-brand"> Hello @ViewBag.clientName!</span>
-			<a href="/Account/LogOff">
+			<a href="#logOut">
 				<img src="~/Files/logout.png" align="left" Hspace="30" title="LogOut" height="45" width="45" />
 			</a>
 		</div>
@@ -21,13 +18,10 @@
 	<div id="AddTour" style="display: none;">
 		@Html.Partial("AddTour")
 	</div>
-
 	<div id="EditTour" style="display: none;">
 	</div>
-
 	<hr />
 	<table id="list"></table>
 	<div id="pager"></div>
-
 	<table id="details"></table>
 </div>

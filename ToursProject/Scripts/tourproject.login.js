@@ -1,4 +1,18 @@
 ﻿tourproject.login = {
+	init: function init() {
+		const hash = location.hash;
+
+		if (hash === "#logOut") {
+			this.logOut();
+			return;
+		}
+		const url = hash === "#register" ? "/Account/Register" : "/Account/Login";
+
+		tourproject.ajax.sendRequest(url, null, "GET")
+		.done((response) => {
+			$("body").html(response);
+		});
+	},
 	login: function login(form) {
 		const objForm = $(form),
 			isValid = tourproject.validate.validate(objForm);
@@ -22,11 +36,11 @@
 
 			objForm.addClass("loading");
 			this.sendRegisterForm(formData)
-			.done((response) => {
+			.then((response) => {
 				response = JSON.parse(response);
 
 				this.doneSubmit(response, objForm);
-			})
+			});
 		}
 	},
 	collectDataFormRegister: function collectDataFormRegister(objForm) {
@@ -55,13 +69,22 @@
 		});
 	},
 	doneSubmit: function doneSubmit(response, objForm) {
-		if (response && response.status) {
-			location.href = location.origin + "/Tour/Index";
-			return;
-		}
-		if (response && !response.status && response.error.length > 0) {
-			tourproject.validate.applyFieldError($("hr"), response.error);
+		if (response && response.error && response.error.length > 0) {
+			tourproject.validate.applyFieldError($("hr"), response.error, "after");
 			objForm.removeClass("loading");
+		} else if (response && !response.error) {
+			localStorage.setItem("isLogged", true);
+			location.hash = "toursList";
+
+			$("body").html(response);
+			tourproject.tourPage.init();
 		}
+	},
+	logOut: function logOut() {
+		tourproject.ajax.sendRequest("/Account/LogOff", null, "GET")
+		.done((response) => {
+			localStorage.removeItem("isLogged");
+			$("body").html(response);
+		});
 	}
 };

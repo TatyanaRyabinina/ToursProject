@@ -32,7 +32,7 @@ namespace ToursProject.Controllers
 				ViewBag.clientName = client.FirstName + " " + client.LastName;
 				ViewBag.PhotoPath = client.PhotoPath;
 			}
-			return View();
+            return Json(RenderPartialViewToString("Index"), JsonRequestBehavior.AllowGet);
 		}
 
 		public JsonResult GetTours(string sidx, string sord, Int32 page, int rows)

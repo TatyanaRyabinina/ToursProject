@@ -1,3 +1,3 @@
 ﻿$(() => {
-	tourproject.tourPage.init();
+	tourproject.init();
 });
